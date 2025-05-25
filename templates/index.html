@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>🚗 Flask 車車搖控器</title>
+  <title>Flask 車車搖控器</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
   <style>
 @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Exo+2:wght@300;600&display=swap');
@@ -60,21 +60,7 @@ body::before {
   transform: translateY(-8px) scale(1.02);
   box-shadow: 0 0 50px rgba(0, 255, 234, 0.8), inset 0 0 20px rgba(0, 255, 234, 0.5);
 }
-/*
-.box::before {
-  content: '';
-  position: absolute;
-  top: -50%;
-  left: -50%;
-  width: 200%;
-  height: 200%;
-  background: radial-gradient(circle, rgba(0, 255, 234, 0.2), transparent 70%);
-  opacity: 0;
-  transition: opacity 0.5s ease;
-  animation: hologramSpin 15s linear infinite;
-  pointer-events: none; /* Allow mouse events to pass through 
-}
-*/
+
 .box:hover::before {
   opacity: 0.3;
 }
@@ -336,10 +322,10 @@ textarea:focus {
     </div>
   </div>
   <div class="box">
-    <h1><i class="fas fa-car"></i> 車車 GPT 指令控制</h1>
+    <h1><i class="fas fa-car"></i> GPT 指令控制</h1>
     <textarea id="promptInput" placeholder="輸入你的指令，例如：跳個舞"></textarea>
     <button id="sendGpt"><i class="fas fa-paper-plane"></i> 送出 GPT 指令</button>
-    <div class="output" id="outputBox">輸出結果會出現在這裡...</div>
+    <div class="output" id="outputBox">輸出結果</div>
   </div>
 
   <script src="https://cdn.socket.io/4.7.5/socket.io.min.js"></script>
@@ -354,10 +340,8 @@ textarea:focus {
     const requestButton = document.getElementById('request');
     const controlButtons = document.querySelectorAll('.control-buttons button');
 
-    // Disable control buttons initially
     controlButtons.forEach(btn => btn.disabled = true);
 
-    // Socket.IO connection handling
     socket.on('connect', () => {
       updateStatus('✅ 已連線至伺服器', false);
     });
@@ -371,7 +355,6 @@ textarea:focus {
       updateStatus('⚠️ 無法連線至伺服器', true);
     });
 
-    // Chart.js setup
     const maxDataPoints = 20;
     const gammaData = {
       labels: Array(maxDataPoints).fill(''),
@@ -428,7 +411,6 @@ textarea:focus {
       }
     });
 
-    // Throttle function to limit deviceorientation events
     function throttle(fn, wait) {
       let lastTime = 0;
       return function (...args) {
@@ -440,7 +422,6 @@ textarea:focus {
       };
     }
 
-    // Update status display
     function updateStatus(message, isError = false) {
       statusDiv.innerText = message;
       statusDiv.classList.toggle('error', isError);
@@ -448,7 +429,6 @@ textarea:focus {
       setTimeout(() => statusDiv.classList.remove('active'), 1000);
     }
 
-    // Update charts with new data
     function updateCharts(gamma, beta) {
       gammaData.datasets[0].data.push(gamma);
       betaData.datasets[0].data.push(beta);
@@ -460,7 +440,6 @@ textarea:focus {
       betaChart.update();
     }
 
-    // Request sensor permission
     requestButton.addEventListener('click', () => {
       if (typeof DeviceOrientationEvent.requestPermission === 'function') {
         DeviceOrientationEvent.requestPermission()
@@ -468,11 +447,11 @@ textarea:focus {
             if (permissionState === 'granted') {
               startControl();
             } else {
-              updateStatus('❌ 未授權感測器', true);
+              updateStatus('未授權感測器', true);
             }
           })
           .catch(err => {
-            updateStatus('⚠️ 感測器存取錯誤', true);
+            updateStatus('感測器存取錯誤', true);
             console.error(err);
           });
       } else {
@@ -480,7 +459,6 @@ textarea:focus {
       }
     });
 
-    // Start device orientation control
     function startControl() {
       requestButton.style.display = 'none';
       updateStatus('✅ 正在偵測...');
@@ -495,7 +473,6 @@ textarea:focus {
       window.addEventListener('deviceorientation', sendOrientation);
     }
 
-    // Control functions
     function ledOn() {
       socket.emit('led', { command: 'ON' });
       updateStatus('💡 LED 已開啟');
@@ -511,7 +488,6 @@ textarea:focus {
       updateStatus('🛑 車輛已停止');
     }
 
-    // GPT instruction handling
     document.getElementById('sendGpt').addEventListener('click', async () => {
       const prompt = document.getElementById('promptInput').value.trim();
       const outputBox = document.getElementById('outputBox');
